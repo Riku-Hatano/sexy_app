@@ -96,7 +96,7 @@ func main() {
 	books = append(books, Book{ID: "2", Isbn: "84756", Title: "Book Two", Author: &Author{Firstname: "Steve", Lastname: "Smith"}})
 
 	//route handlers / endpoints
-	r.HandleFunc("/api/books", getBooks).Methods("GET")
+	r.HandleFunc("/api/getbooks", getBooks).Methods("GET")
 	r.HandleFunc("/api/books/{id}", getBook).Methods("GET")
 	r.HandleFunc("/api/books", createBook).Methods("POST")
 	r.HandleFunc("/api/books/{id}", updateBook).Methods("PUT")
