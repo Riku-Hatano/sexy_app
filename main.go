@@ -2,10 +2,12 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"math/rand"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/gorilla/mux"
 )
@@ -49,10 +51,13 @@ func getBook(w http.ResponseWriter, r *http.Request) {
 
 //create book
 func createBook(w http.ResponseWriter, r *http.Request) {
+	rand.Seed(time.Now().UnixNano())
 	w.Header().Set("Content-Type", "application/json")
 	var book Book
-	_ = json.NewDecoder(r.Body).Decode(&book)
+	json.NewDecoder(r.Body).Decode(&book)
+	fmt.Println(r.Body)
 	book.ID = strconv.Itoa(rand.Intn(10000000)) // mock id - not safe
+	book.Isbn = strconv.Itoa(rand.Intn(100000))
 	books = append(books, book)
 	json.NewEncoder(w).Encode(book)
 
@@ -88,6 +93,8 @@ func deleteBooks(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	//creating digigs and strings for Isbn and Title
+	randomMaker()
 	//init router
 	r := mux.NewRouter()
 
@@ -97,7 +104,7 @@ func main() {
 
 	//route handlers / endpoints
 	r.HandleFunc("/api/getbooks", getBooks).Methods("GET")
-	r.HandleFunc("/api/books/{id}", getBook).Methods("GET")
+	r.HandleFunc("/api/books/{isbn}", getBook).Methods("GET")
 	r.HandleFunc("/api/books", createBook).Methods("POST")
 	r.HandleFunc("/api/books/{id}", updateBook).Methods("PUT")
 	r.HandleFunc("/api/books/{id}", deleteBooks).Methods("DELETE")
